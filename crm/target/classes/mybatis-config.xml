@@ -8,7 +8,7 @@
   
   <typeAliases>
   
-  	<!--<package name="com.xxx.domain"/>-->
+  	<package name="z.h.crm.settings.domain"/>
 
   </typeAliases>
   
@@ -26,7 +26,7 @@
 
   <mappers>
    
-      <!--<package name="com.xxx.dao"/>-->
+      <package name="z.h.crm.settings.dao"/>
     
   </mappers>
 </configuration>
