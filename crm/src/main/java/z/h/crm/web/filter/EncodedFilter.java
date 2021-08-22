@@ -9,7 +9,6 @@ import java.io.IOException;
  **/
 public class EncodedFilter implements Filter {
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
-        System.out.println("进入过滤器...");
         // 处理post请求的编码
         req.setCharacterEncoding("utf-8");
         // 处理post响应的编码

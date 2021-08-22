@@ -13,6 +13,16 @@
     <filter-name>EncodedFilter</filter-name>
     <url-pattern>*.do</url-pattern>
   </filter-mapping>
+
+  <filter>
+    <filter-name>LoginFilter</filter-name>
+    <filter-class>z.h.crm.web.filter.LoginFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>LoginFilter</filter-name>
+    <url-pattern>*.do</url-pattern>
+    <url-pattern>*.jsp</url-pattern>
+  </filter-mapping>
   
   <servlet>
     <servlet-name>UserController</servlet-name>

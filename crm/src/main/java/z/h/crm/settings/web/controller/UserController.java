@@ -22,7 +22,6 @@ import java.util.Map;
 public class UserController extends HttpServlet {
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("进入用户控制器");
         String path = request.getServletPath();
         if("/settings/user/login.do".equals(path)){
             login(request,response);
@@ -38,13 +37,11 @@ public class UserController extends HttpServlet {
         String loginPwd = request.getParameter("loginPwd");
         loginPwd = MD5Util.getMD5(loginPwd);
         String ip = request.getRemoteAddr();
-        System.out.println(ip);
         // 通过代理类创建对象
         UserService userService = (UserService) ServiceFactory.getService(new UserServiceImpl());
         try{
             // 调用service层处理业务逻辑
             User user = userService.login(loginAct,loginPwd,ip);
-            System.out.println(user);
             // 将结果转为json串并相应到前台
             PrintJson.printJsonFlag(response,true);
             // 将用户存入session
