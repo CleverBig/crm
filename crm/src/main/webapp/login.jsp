@@ -12,6 +12,11 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 	<script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
 	<script type="text/javascript">
 		$(function(){
+			// 使login.jsp始终在顶层窗口中打开
+			if(window.top!=window){
+				window.top.location=window.location;
+			}
+
 			// 页面加载完毕后，loginAct获取焦点
 			$("#loginAct").focus();
 

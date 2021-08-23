@@ -9,6 +9,7 @@
   <typeAliases>
   
   	<package name="z.h.crm.settings.domain"/>
+  	<package name="z.h.crm.workbench.domain"/>
 
   </typeAliases>
   
@@ -27,7 +28,8 @@
   <mappers>
    
       <package name="z.h.crm.settings.dao"/>
-    
+      <package name="z.h.crm.workbench.dao"/>
+
   </mappers>
 </configuration>
 

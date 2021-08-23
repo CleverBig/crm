@@ -23,7 +23,8 @@
     <url-pattern>*.do</url-pattern>
     <url-pattern>*.jsp</url-pattern>
   </filter-mapping>
-  
+
+  <!--用户控制器-->
   <servlet>
     <servlet-name>UserController</servlet-name>
     <servlet-class>z.h.crm.settings.web.controller.UserController</servlet-class>
@@ -31,6 +32,18 @@
   <servlet-mapping>
     <servlet-name>UserController</servlet-name>
     <url-pattern>/settings/user/login.do</url-pattern>
+  </servlet-mapping>
+
+  <!--市场活动控制器-->
+  <servlet>
+    <servlet-name>ActivityController</servlet-name>
+    <servlet-class>z.h.crm.workbench.web.controller.ActivityController</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ActivityController</servlet-name>
+    <url-pattern>/workbench/activity/getUser.do</url-pattern>
+    <url-pattern>/workbench/activity/save.do</url-pattern>
+    <url-pattern>/workbench/activity/pageList.do</url-pattern>
   </servlet-mapping>
 
 </web-app>

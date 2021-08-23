@@ -42,4 +42,9 @@ public class UserServiceImpl implements UserService {
         }
         return userReturn;
     }
+
+    public User getUserById(String id) {
+        return userDao.getUserById(id);
+    }
+
 }

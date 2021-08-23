@@ -9,4 +9,6 @@ import z.h.crm.settings.domain.User;
  **/
 public interface UserService {
     User login(String loginAct, String loginPwd, String ip) throws LoginException;
+
+    User getUserById(String id);
 }
