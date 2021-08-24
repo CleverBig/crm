@@ -11,5 +11,5 @@ import java.util.List;
 public interface UserDao {
     User login(User user);
 
-    User getUserById(String id);
+    List<User> getUserList();
 }

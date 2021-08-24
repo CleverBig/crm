@@ -30,6 +30,22 @@
 
     </insert>
 
+    <select id="getActivityById" resultType="Activity">
+        select
+        a.id,
+        u.name as owner,
+        a.name,
+        a.startDate,
+        a.endDate,
+        a.cost,
+        a.description,
+        a.createTime,
+        a.createBy,
+        a.editTime,
+        a.editBy
+        from tbl_activity a join tbl_user u on a.owner = u.id where a.id = #{id}
+    </select>
+
     <select id="getTotalByCondition" resultType="int">
         select count(*) from tbl_activity a join tbl_user u on a.owner = u.id
         <where>
@@ -49,7 +65,7 @@
     </select>
 
     <select id="getActivityListByCondition" resultType="Activity">
-        select a.id,a.name,u.name as owner,a.startDate,a.endDate from tbl_activity a join tbl_user u on a.owner = u.id
+        select a.id,u.id as uid,a.name,u.name as owner,a.startDate,a.endDate from tbl_activity a join tbl_user u on a.owner = u.id
         <where>
             <if test="name != null and name != ''">
                 a.name like '%' #{name} '%'
@@ -68,6 +84,36 @@
         limit #{skipNo},#{pageSize}
 
     </select>
+
+    <select id="getActivityByIdsCount" resultType="int">
+        select count(*) from tbl_activity where id in
+        <foreach collection="array" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+    <delete id="deleteActivityByIds">
+        delete from tbl_activity where id in
+        <foreach collection="array" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="getUserAndActivityList" resultType="Activity">
+        select a.id,u.name as owner,a.name,a.startDate,a.endDate,a.cost,a.description from tbl_activity a join tbl_user u on a.owner = u.id where a.id = #{id}
+    </select>
+
+    <insert id="update">
+        update tbl_activity set
+        owner=#{owner},
+        name=#{name},
+        startDate=#{startDate},
+        endDate=#{endDate},
+        cost=#{cost},
+        description=#{description},
+        editTime=#{editTime},
+        editBy=#{editBy} where id=#{id}
+    </insert>
 
 </mapper>
 

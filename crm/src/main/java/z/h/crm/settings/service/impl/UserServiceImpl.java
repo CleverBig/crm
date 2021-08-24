@@ -7,6 +7,8 @@ import z.h.crm.settings.service.UserService;
 import z.h.crm.utils.DateTimeUtil;
 import z.h.crm.utils.SqlSessionUtil;
 
+import java.util.List;
+
 /**
  * @author BigClever
  * @date 2021/8/21
@@ -43,8 +45,8 @@ public class UserServiceImpl implements UserService {
         return userReturn;
     }
 
-    public User getUserById(String id) {
-        return userDao.getUserById(id);
+    public List<User> getUserList() {
+        return userDao.getUserList();
     }
 
 }

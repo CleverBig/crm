@@ -9,6 +9,7 @@ import z.h.crm.utils.ServiceFactory;
 import z.h.crm.utils.UUIDUtil;
 import z.h.crm.vo.PaginationVO;
 import z.h.crm.workbench.domain.Activity;
+import z.h.crm.workbench.domain.ActivityRemark;
 import z.h.crm.workbench.service.ActivityService;
 import z.h.crm.workbench.service.impl.ActivityServiceImpl;
 
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,12 +33,87 @@ public class ActivityController extends HttpServlet {
         // 获取url-pattern路径
         String path = req.getServletPath();
         if("/workbench/activity/getUser.do".equals(path)){
-            getUserById(req,resp);
+            getUserList(req,resp);
         }else if("/workbench/activity/save.do".equals(path)){
             save(req,resp);
         }else if("/workbench/activity/pageList.do".equals(path)){
             pageList(req,resp);
+        }else if("/workbench/activity/delete.do".equals(path)){
+            delete(req,resp);
+        }else if("/workbench/activity/getUserAndActivityList.do".equals(path)){
+            getUserAndActivityList(req,resp);
+        }else if("/workbench/activity/update.do".equals(path)){
+            update(req,resp);
+        }else if("/workbench/activity/detail.do".equals(path)){
+            detail(req,resp);
+        }else if("/workbench/activity/remarkList.do".equals(path)){
+            remarkList(req,resp);
         }
+    }
+
+    private void remarkList(HttpServletRequest req, HttpServletResponse resp) {
+        System.out.println("进入到remarkList方法...");
+        String aId = req.getParameter("aId");
+        ActivityService activityService = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
+        List<ActivityRemark> remarkList = activityService.getRemarkListByaId(aId);
+        System.out.println(remarkList);
+        PrintJson.printJsonObj(resp,remarkList);
+    }
+
+    private void detail(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        System.out.println("进入到detail方法...");
+        String id = req.getParameter("id");
+        ActivityService activityService = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
+        Activity activity = activityService.detail(id);
+        // 将activity对象存入Request对象，然后在请求转发到前台后通过Request对象再取出来
+        req.setAttribute("activity",activity);
+        req.getRequestDispatcher("/workbench/activity/detail.jsp").forward(req,resp);
+    }
+
+    private void update(HttpServletRequest req, HttpServletResponse resp) {
+        System.out.println("进入到update方法...");
+        String id = req.getParameter("id");
+        String owner = req.getParameter("owner");
+        String name = req.getParameter("name");
+        String startDate = req.getParameter("startDate");
+        String endDate = req.getParameter("endDate");
+        String cost = req.getParameter("cost");
+        String description = req.getParameter("description");
+        String editTime = DateTimeUtil.getSysTime();
+        String editBy = ((User)req.getSession().getAttribute("user")).getName();
+        // 创建Activity对象
+        Activity activity = new Activity();
+        activity.setId(id);
+        activity.setOwner(owner);
+        activity.setName(name);
+        activity.setStartDate(startDate);
+        activity.setEndDate(endDate);
+        activity.setCost(cost);
+        activity.setDescription(description);
+        activity.setEditTime(editTime);
+        activity.setEditBy(editBy);
+        ActivityService activityService = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
+        boolean flag = activityService.update(activity);
+        System.out.println(flag);
+        PrintJson.printJsonFlag(resp,flag);
+    }
+
+    private void getUserAndActivityList(HttpServletRequest req, HttpServletResponse resp) {
+        System.out.println("进入到getUserAndActivityList方法...");
+        String id = req.getParameter("id");
+        ActivityService activityService = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
+        Map<String,Object> map = activityService.getUserAndActivityList(id);
+        PrintJson.printJsonObj(resp,map);
+    }
+
+    private void delete(HttpServletRequest req, HttpServletResponse resp) {
+        System.out.println("进入到delete方法...");
+        String[] ids = req.getParameterValues("id");
+        System.out.println(ids);
+        ActivityService activityService = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
+        boolean flag = activityService.delete(ids);
+        PrintJson.printJsonFlag(resp,flag);
+
     }
 
     private void pageList(HttpServletRequest req, HttpServletResponse resp) {
@@ -64,7 +141,6 @@ public class ActivityController extends HttpServlet {
         ActivityService activityService = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
         // 调用业务层的pageList方法
         PaginationVO<Activity> paginationVO = activityService.pageList(map);
-        System.out.println(paginationVO);
         PrintJson.printJsonObj(resp,paginationVO);
 
     }
@@ -96,13 +172,10 @@ public class ActivityController extends HttpServlet {
         PrintJson.printJsonFlag(resp,flag);
     }
 
-    private void getUserById(HttpServletRequest req, HttpServletResponse resp) {
-
-        System.out.println("进入到getUserById方法...");
-        String id = req.getParameter("id");
+    private void getUserList(HttpServletRequest req, HttpServletResponse resp) {
+        System.out.println("进入到getUserList方法...");
         UserService userService = (UserService) ServiceFactory.getService(new UserServiceImpl());
-        User user = userService.getUserById(id);
-        System.out.println(user);
+        List<User> user = userService.getUserList();
         PrintJson.printJsonObj(resp,user);
 
     }
