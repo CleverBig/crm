@@ -5,6 +5,11 @@
 
 <mapper namespace="z.h.crm.workbench.dao.ActivityRemarkDao">
 
+    <update id="updateRemark">
+        update tbl_activity_remark set noteContent=#{noteContent},editTime=#{editTime},editBy=#{editBy},editFlag=#{editFlag}
+        where id = #{id}
+    </update>
+
     <select id="getActivityByAidsCount" resultType="int">
         select count(*) from tbl_activity_remark where activityId in
         <foreach collection="array" item="id" open="(" close=")" separator=",">
@@ -23,6 +28,28 @@
         </foreach>
     </delete>
 
+    <delete id="deleteRemarkById">
+        delete from tbl_activity_remark where id = #{id}
+    </delete>
+
+    <insert id="saveRemark">
+        insert into tbl_activity_remark(
+            id,
+            noteContent,
+            createTime,
+            createBy,
+            editFlag,
+            activityId
+
+        ) values(
+            #{id},
+            #{noteContent},
+            #{createTime},
+            #{createBy},
+            #{editFlag},
+            #{activityId}
+        )
+    </insert>
 </mapper>
 
 

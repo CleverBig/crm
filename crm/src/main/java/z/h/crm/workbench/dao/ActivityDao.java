@@ -25,4 +25,10 @@ public interface ActivityDao {
     int update(Activity activity);
 
     Activity getActivityById(String id);
+
+    List<Activity> selectActivityList(String cid);
+
+    List<Activity> showBundActivityList(Map<String, String> map);
+
+    List<Activity> showBundActivityListByName(String aname);
 }

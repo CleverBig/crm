@@ -88,4 +88,31 @@ public class ActivityServiceImpl implements ActivityService {
     public List<ActivityRemark> getRemarkListByaId(String aId) {
         return activityRemarkDao.getRemarkListByaId(aId);
     }
+
+    public boolean deleteRemark(String id) {
+        boolean flag = true;
+        int count = activityRemarkDao.deleteRemarkById(id);
+        if(count != 1){
+            flag = false;
+        }
+        return flag;
+    }
+
+    public boolean saveRemark(ActivityRemark activityRemark) {
+        boolean flag = true;
+        int count = activityRemarkDao.saveRemark(activityRemark);
+        if(count != 1){
+            flag = false;
+        }
+        return flag;
+    }
+
+    public boolean updateRemark(ActivityRemark activityRemark) {
+        boolean flag = true;
+        int count = activityRemarkDao.updateRemark(activityRemark);
+        if(count != 1){
+            flag = false;
+        }
+        return flag;
+    }
 }

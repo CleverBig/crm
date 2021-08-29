@@ -50,9 +50,76 @@
 			$(this).children("span").css("color","#E6E6E6");
 		});
 
+		$("#remarkBody").on("mouseover",".remarkDiv",function(){
+			$(this).children("div").children("div").show();
+		})
+		$("#remarkBody").on("mouseout",".remarkDiv",function(){
+			$(this).children("div").children("div").hide();
+		})
+
 		remarkList();
+
+		$("#saveBtn").click(function(){
+			$.ajax({
+				url: "workbench/activity/saveRemark.do",
+				data: {
+					"noteContent": $("#remark").val(),
+					"activityId": "${activity.id}"
+				},
+				type: "post",
+				dataType: "json",
+				success: function(data){
+					// 接收保存成功结果，备注对象
+					if(data.success){
+						$("#remarkDiv").before(
+								'<div id="'+data.remark.id+'" class="remarkDiv" style="height: 60px;">'+
+								'<img title="'+(data.remark.createBy)+'" src="image/user-thumbnail.png" style="width: 30px; height:30px;">'+
+								'<div style="position: relative; top: -40px; left: 40px;" >'+
+								'<h5 id="noteContent'+data.remark.id+'">'+data.remark.noteContent+'</h5>'+
+								'<font color="gray">市场活动</font> <font color="gray">-</font> <b>${activity.name}</b> <small id="s'+data.remark.id+'" style="color: gray;"> '+(data.remark.createTime)+' 由'+(data.remark.createBy)+'完成</small>'+
+								'<div style="position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;">'+
+								'<a class="myHref" onclick="editRemark(\''+data.remark.id+'\')" href="javascript:void(0);"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #FF0000;"></span></a>'+
+								'&nbsp;&nbsp;&nbsp;&nbsp;'+
+								'<a class="myHref" onclick="deleteRemark(\''+data.remark.id+'\')" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #FF0000;"></span></a>'+
+								'</div>'+
+								'</div>'+
+								'</div>'
+						);
+						$("#remark").val("");
+
+					}else{
+						alert("添加备注失败");
+					}
+				}
+			})
+		})
+
+		$("#updateRemarkBtn").click(function(){
+			var id = $("#remarkId").val();
+			$.ajax({
+				url: "workbench/activity/updateRemark.do",
+				data: {
+					"nid": id,
+					"noteContent": $("#noteContent").val()
+				},
+				type: "post",
+				dataType: "json",
+				success: function(data){
+					// 修改返回的结果，市场备注对象
+					if(data.success){
+						$("#noteContent"+id).html(data.ar.noteContent);
+						$("#s"+id).html(data.ar.editTime +"由"+data.ar.editBy+"完成");
+						$("#editRemarkModal").modal("hide");
+					}else{
+						alert("修改备注失败");
+					}
+				}
+			})
+		})
+
 	});
-	
+
+	/*在动态拼接的代码中必须以这种方式进行值传递onclick="deleteRemark(\''+v.id+'\')"*/
 	function remarkList() {
 		$.ajax({
 			url: "workbench/activity/remarkList.do",
@@ -64,15 +131,15 @@
 			success: function(data){
 				$.each(data,function(i,v){
 					$("#remarkDiv").before(
-						'<div class="remarkDiv" style="height: 60px;">'+
+						'<div id="'+v.id+'" class="remarkDiv" style="height: 60px;">'+
 							'<img title="'+(v.editFlag==0?v.createBy:v.editBy)+'" src="image/user-thumbnail.png" style="width: 30px; height:30px;">'+
 							'<div style="position: relative; top: -40px; left: 40px;" >'+
-								'<h5>'+v.noteContent+'</h5>'+
-								'<font color="gray">市场活动</font> <font color="gray">-</font> <b>${activity.name}</b> <small style="color: gray;"> '+(v.editFlag==0?v.createTime:v.editTime)+' 由'+(v.editFlag==0?v.createBy:v.editBy)+'完成</small>'+
+								'<h5 id="noteContent'+v.id+'">'+v.noteContent+'</h5>'+
+								'<font color="gray">市场活动</font> <font color="gray">-</font> <b>${activity.name}</b> <small id="s'+v.id+'" style="color: gray;"> '+(v.editFlag==0?v.createTime:v.editTime)+' 由'+(v.editFlag==0?v.createBy:v.editBy)+'完成</small>'+
 								'<div style="position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;">'+
-									'<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #E6E6E6;"></span></a>'+
+									'<a class="myHref" onclick="editRemark(\''+v.id+'\')" href="javascript:void(0);"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #FF0000;"></span></a>'+
 									'&nbsp;&nbsp;&nbsp;&nbsp;'+
-									'<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #E6E6E6;"></span></a>'+
+									'<a class="myHref" onclick="deleteRemark(\''+v.id+'\')" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #FF0000;"></span></a>'+
 								'</div>'+
 							'</div>'+
 						'</div>'
@@ -81,13 +148,37 @@
 			}
 		})
 	}
+
+	function deleteRemark(id){
+		$.ajax({
+			url: "workbench/activity/deleteRemark.do",
+			data: {id},
+			type: "post",
+			dataType: "json",
+			success: function(data){
+				if(data){
+					// 在页面中移除被删除的备注
+					$("#"+id).remove();
+					alert("删除备注成功");
+				}else{
+					alert("删除备注失败");
+				}
+			}
+		})
+	}
+
+	function editRemark(id) {
+		$("#remarkId").val(id);
+		$("#noteContent").html($("#noteContent"+id).html());
+		$("#editRemarkModal").modal("show");
+	}
 	
 	</script>
 
 </head>
 <body>
 	
-	<!-- 修改市场活动备注的模态窗口
+	<!-- 修改市场活动备注的模态窗口-->
 	<div class="modal fade" id="editRemarkModal" role="dialog">
 		<%-- 备注的id --%>
 		<input type="hidden" id="remarkId">
@@ -115,7 +206,7 @@
                 </div>
             </div>
         </div>
-    </div>-->
+    </div>
 
     <!-- 修改市场活动的模态窗口
     <div class="modal fade" id="editActivityModal" role="dialog">
@@ -244,7 +335,7 @@
 	</div>
 	
 	<!-- 备注 -->
-	<div style="position: relative; top: 30px; left: 40px;">
+	<div style="position: relative; top: 30px; left: 40px;" id="remarkBody">
 		<div class="page-header">
 			<h4>备注</h4>
 		</div>
@@ -282,7 +373,7 @@
 				<textarea id="remark" class="form-control" style="width: 850px; resize : none;" rows="2"  placeholder="添加备注..."></textarea>
 				<p id="cancelAndSaveBtn" style="position: relative;left: 737px; top: 10px; display: none;">
 					<button id="cancelBtn" type="button" class="btn btn-default">取消</button>
-					<button type="button" class="btn btn-primary">保存</button>
+					<button id="saveBtn" type="button" class="btn btn-primary">保存</button>
 				</p>
 			</form>
 		</div>
